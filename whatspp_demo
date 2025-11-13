@@ -1,0 +1,40 @@
+import pyautogui
+import time
+import webbrowser
+
+# Step 1: Open WhatsApp Web
+webbrowser.open("https://web.whatsapp.com")
+print("Opening WhatsApp Web...")
+time.sleep(15)  # Wait for WhatsApp to load fully
+
+# Step 2: Get screen size
+screen_width, screen_height = pyautogui.size()
+print(f"Screen size detected: {screen_width}x{screen_height}")
+
+# Step 3: Calculate dynamic coordinates (approx positions)
+# Adjust percentages if needed
+search_bar_x = int(screen_width * 0.15)
+search_bar_y = int(screen_height * 0.15)
+
+chat_box_x = int(screen_width * 0.75)
+chat_box_y = int(screen_height * 0.90)
+
+# Step 4: Click on Search Bar
+pyautogui.click(search_bar_x, search_bar_y)
+time.sleep(1)
+
+# Step 5: Type the contact name
+contact_name = "Naresh"  # Change this to your contact/group name
+pyperclip.copy(contact_name)
+pyautogui.hotkey("ctrl", "v")
+time.sleep(2)
+pyautogui.press("enter")
+
+# Step 6: Type and send the message
+message = "task completed for Pyautogui"
+pyperclip.copy(message)
+pyautogui.hotkey("ctrl", "v")
+time.sleep(1)
+pyautogui.press("enter")
+
+print("✅ Message sent successfully!")

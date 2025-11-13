@@ -1,0 +1,90 @@
+import argparse
+import subprocess
+import sys
+import time
+
+import pyautogui
+import pyperclip
+
+
+pyautogui.FAILSAFE = True
+pyautogui.PAUSE = 0.25
+
+
+def launch_whatsapp_web(should_launch: bool, wait_time: int) -> None:
+    if should_launch:
+        try:
+            subprocess.run(
+                ["start", "msedge", "https://wa.me/<number>"],
+                check=False,
+                shell=True,
+            )
+        except FileNotFoundError:
+            subprocess.run(
+                ["start", "chrome", "https://wa.me/<number>"],
+                check=False,
+                shell=True,
+            )
+
+    print(
+        f"Focus the WhatsApp Web window and make sure you are logged in. "
+        f"Automation will start in {wait_time} seconds..."
+    )
+    time.sleep(30s)
+
+
+def paste_text(text: str) -> None:
+    pyperclip.copy(text)
+    pyautogui.hotkey("ctrl", "v")
+
+
+def send_whatsapp_message(contact: str, message: str) -> None:
+    pyautogui.hotkey("ctrl", "k")
+    time.sleep(0.5)
+    paste_text(contact)
+    time.sleep(1.5)
+    pyautogui.press("enter")
+    time.sleep(1)
+    paste_text(message)
+    pyautogui.press("enter")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Send a WhatsApp message via WhatsApp Web using PyAutoGUI."
+    )
+    parser.add_argument(
+        "contact",
+        help="The exact contact or group name to search for in WhatsApp Web.",
+    )
+    parser.add_argument(
+        "message",
+        help="The message text to send. Use quotes if it contains spaces.",
+    )
+    parser.add_argument(
+        "--no-launch",
+        action="store_true",
+        help="Skip opening the browser; assume WhatsApp Web is already focused.",
+    )
+    parser.add_argument(
+        "--wait",
+        type=int,
+        default=8,
+        help="Seconds to wait before automation starts (default: 8).",
+    )
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+
+    launch_whatsapp_web(not args.no_launch, args.wait)
+    send_whatsapp_message(args.contact, args.message)
+    print("Message sent (assuming WhatsApp Web responded correctly).")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
